@@ -317,12 +317,12 @@ namespace timetrakin.net.Controllers
             var existe = new Bussines.movimiento().get_movimiento(mov.id);
             bool status = false;
             if (existe!=null) {
-                if (existe.fecha_registro.Date==DateTime.Now.Date)
-                {
-                    existe.id_cat_estatus = 3;
-                    new Bussines.movimiento().eliminaMovimiento(existe);
-                    status = true;
-                }               
+                //if (existe.fecha_registro.Date==DateTime.Now.Date)
+                //{                    
+                //}
+                existe.id_cat_estatus = 3;
+                new Bussines.movimiento().eliminaMovimiento(existe);
+                status = true;
             }
             return Json(status);
         }
