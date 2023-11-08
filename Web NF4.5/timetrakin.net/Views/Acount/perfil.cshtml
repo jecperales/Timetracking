@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.Title = "perfil";
+}
+<script src="~/Scripts/sweetaler.js"></script>
+<div class="container" >
+    <br />
+    <div class="row">
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="inputText3" class="col-form-label">Correo</label>
+                <input id="correo" type="text" class="form-control" value="@Html.Raw( ViewBag.correo)">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="inputText3" class="col-form-label">Perfil</label>
+                <input id="nombre_per" type="text" class="form-control"value="@Html.Raw( ViewBag.perfil)" readonly>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="inputText3" class="col-form-label">Contraseña</label>
+                <input id="psw" type="text" class="form-control" value="@Html.Raw( ViewBag.contra)">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label for="inputText3" class="col-form-label">Confirmar contraseña</label>
+                <input id="psw1" type="text" class="form-control" value="@Html.Raw( ViewBag.contra)">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <button class="btn btn-success" onclick="actualiza()">
+                <i class="fa fa-edit">Actualizar</i>
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+    function actualiza() {
+
+        var p = document.getElementById('psw').value;
+        var p1 = document.getElementById('psw1').value;
+        if (p == p1) {
+
+            $.ajax({
+                url: '@Url.Action("actualizaDatos", "Acount")',
+                type: 'POST',
+                data: {
+                    correo: document.getElementById('correo').value,
+                    psw: p
+                },
+                async: true,
+                success: function (data) {
+                    if (data) {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Contraseña actualizada',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        
+                    } else {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Error al actualizar contraseña',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                }
+            });
+
+        } else {
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Verifique su contraseña',
+                showConfirmButton: false,
+                timer: 1500
+            })
+        }
+
+       
+
+    }
+</script>
+

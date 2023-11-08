@@ -1,0 +1,17 @@
+
+<ion-tabs>
+  <ion-tab-bar slot="bottom" color="primary">
+
+    <ion-tab-button tab="actividades">
+      <ion-icon name="construct-outline"></ion-icon>
+      <ion-label>Actividades</ion-label>
+    </ion-tab-button>
+
+    <!-- tab="historial" -->
+    <ion-tab-button  [state]="ingeniero" [routerLink]="['historial']"> 
+      <ion-icon name="calendar-outline"></ion-icon>
+      <ion-label>Historial</ion-label>
+    </ion-tab-button>
+
+  </ion-tab-bar>
+</ion-tabs>

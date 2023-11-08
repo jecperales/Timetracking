@@ -1,0 +1,201 @@
+﻿@{
+    ViewBag.Title = "altaPais";
+}
+<script src="~/Scripts/angular.min.js"></script>
+<script src="~/Scripts/sweetaler.js"></script>
+<script src="~/Scripts/ui-bootstrap-tpls-3.0.3.min.js"></script>
+<div class="container-fluid" ng-app="myApp" ng-controller="myCtrl">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="inputText3" class="col-form-label">Pais</label>
+                <input id="pai" type="text" class="form-control" ng-model="pais">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="inputText3" class="col-form-label">Estatus</label>
+                <select class="form-control" ng-model="SlectEstatus" ng-options="x.label for x in Testatus"></select>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-2">
+            <button class="btn btn-primary" ng-click="limpear()">
+                <i class="fa fa-trash-alt"> Limpear</i>
+            </button>
+        </div>
+        <div class="col-md-2"  ng-if="bool_actualiza!=true">
+            <button class="btn btn-success" ng-click="registrarPais()">
+                <i class="fa fa-save"> Guardar</i>
+            </button>
+        </div>
+        <div class="col-md-2" ng-if="bool_actualiza==true">
+            <button class="btn btn-success" ng-click="modificarPais()">
+                <i class="fa fa-save"> Modificar</i>
+            </button>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Pais</th>
+                        <th>Estatus</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="d in Tdatos">
+                        <td>{{d.nombre}}</td>
+                        <td>
+                            <div ng-if="d.estatus==1">Activo</div>
+                            <div ng-if="d.estatus==0">Inactivo</div>
+                        </td>
+                        <td>
+                            <div><i ng-click="editar(d)" class="fa fa-edit" style="color:darkblue;float:left;width:35px;" title="Editar"></i></div>
+                            <div><i ng-click="reliminarPais(d)" class="fa fa-trash" style="color:darkred;float:left;width:35px;" title="Eliminar"></i></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="text-align: center">
+                <ul uib-pagination total-items="totalCount" ng-model="pageIndex" ng-change="pageChanged()" items-per-page="pageSizeSelected" direction-links="true" max-size="maxSize" class="pagination" boundary-links="true" rotate="false" num-pages="numPages"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var app = angular.module('myApp', ['ui.bootstrap']);
+    app.controller('myCtrl', function ($scope, $http) {
+        $scope.pais = '';
+        $scope.SlectEstatus = '';
+        $scope.Testatus = [{ id: 0, label: 'Inactivo' }, { id: 1, label: 'Activo' }];
+        $scope.SlectEstatus = $scope.Testatus[1];
+        $scope.bool_actualiza = false;
+        $scope.Tdatos = [];
+        $scope.totalCount = 0;
+        $scope.pageIndex = 1;
+        $scope.pageSizeSelected = 6;
+        $scope.tem_id = 0;
+
+        $scope.editar = function (d) {
+            $scope.tem_id = d.id;
+            $scope.pais = d.nombre;
+            $scope.SlectEstatus = $scope.Testatus.find(x => x.id == d.estatus);
+            $scope.bool_actualiza = true;
+        }
+
+        $scope.modificarPais = function () {
+            $scope.pais = {
+                id: $scope.tem_id,
+                nombre: $scope.pais,
+                estatus: $scope.SlectEstatus .id
+            }
+            $http.post("@Url.Action("registrarPais", "Administracion")", JSON.stringify($scope.pais))
+                .then(function (response) {
+                    if (response.data) {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Pais registrado',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+
+                        $scope.limpear();
+                        $scope.getEmployeeList();
+                    }
+                }, function (response) {
+
+                });
+        }
+
+        $scope.reliminarPais = function (d) {
+            $scope.pais = {
+                id: d.id
+            }
+            $http.post("@Url.Action("eliminaPais", "Administracion")", JSON.stringify($scope.pais))
+                .then(function (response) {
+                    if (response.data) {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Pais eliminado',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+
+                        $scope.limpear();
+                        $scope.getEmployeeList();
+                    }
+                }, function (response) {
+
+                });
+        }
+
+        $scope.limpear = function () {
+            $scope.pais = '';
+            $scope.SlectEstatus = '';
+            $scope.SlectEstatus = $scope.Testatus[1];
+            $scope.tem_id = 0;
+            $scope.bool_actualiza = false;
+            document.getElementById('pai').focus();
+        }
+
+        $scope.registrarPais = function () {
+            $scope.pais = {
+                id: 0,
+                nombre: $scope.pais,
+                estatus: $scope.SlectEstatus .id
+            }
+            $http.post("@Url.Action("registrarPais", "Administracion")", JSON.stringify($scope.pais))
+                .then(function (response) {
+                    if (response.data) {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Pais registrado',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+
+                        $scope.limpear();
+                        $scope.getEmployeeList();
+                    }
+                }, function (response) {
+
+                });
+        }
+
+          $scope.getEmployeeList = function () {
+
+                $http.post('@Url.Action("paginado_paises", "Administracion")?pageIndex=' + $scope.pageIndex + "&pageSize=" + $scope.pageSizeSelected).then(
+                    function (response) {
+                        $scope.Tdatos = [];
+                        $scope.Tdatos = response.data.lista;
+                        $scope.totalCount = response.data.total;
+                    },
+                    function (err) {
+                        var error = err;
+                    });
+            };
+
+        $scope.getEmployeeList();
+
+            $scope.pageChanged = function () {
+                $scope.getEmployeeList();
+            };
+
+
+            $scope.changePageSize = function () {
+                $scope.pageIndex = 1;
+                $scope.getEmployeeList();
+            };
+
+
+    });
+</script>

@@ -1,0 +1,128 @@
+
+<ion-header>
+  <ion-toolbar>
+    <ion-item>
+      <ion-avatar slot="start">
+        <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+      </ion-avatar>
+      <ion-label>{{this.ingeniero.nombre}} {{this.ingeniero.ap_paterno}}</ion-label>
+    </ion-item>
+
+    <ion-buttons slot="end">
+      <ion-button [routerLink]="'/login'"> Logout </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" [fullscreen]="true"  scrollY="true">
+  <ion-list>
+    <!-- Acyividad -->
+    <ion-item>
+      <ion-input label="Actividad (Max 30 caracteres)" placeholder="Ingrese una actividad" labelPlacement="stacked" [counter]="false" maxlength="30" [(ngModel)]="activity"></ion-input>
+    </ion-item>
+
+    <!-- Fecha, hora de inicio, hora de fin -->
+    <ion-item>
+      <ion-datetime-button datetime="fecha"></ion-datetime-button>
+      <ion-modal [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime id="fecha" presentation="date" [(ngModel)]="fecha_r" ></ion-datetime>      
+        </ng-template>
+      </ion-modal>
+
+      <ion-datetime-button datetime="h_inicio"></ion-datetime-button>
+      <ion-modal [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime id="h_inicio" presentation="time" [(ngModel)]="hora_inicio"></ion-datetime>      
+        </ng-template>
+      </ion-modal>
+
+      <ion-datetime-button datetime="h_fin"></ion-datetime-button>
+      <ion-modal [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime id="h_fin" presentation="time" [(ngModel)]="hora_fin"></ion-datetime>      
+        </ng-template>
+      </ion-modal>
+    </ion-item>
+
+    <!-- Torre de atencion -->
+    <ion-item>
+      <ion-select label="Torre de atención" labelPlacement="stacked" placeholder="Seleccione..." [(ngModel)]="torre_atencion">
+        <ion-select-option [value]="ta" *ngFor="let ta of torre_atencion_Arr">{{ta.nombre}}</ion-select-option>
+      </ion-select>
+
+      <span class="ion-padding"></span>
+
+      <ion-select label="Tipo de atención" labelPlacement="stacked" placeholder="Seleccione..." [(ngModel)]="tipo_atencion">
+        <ion-select-option [value]="tpa" *ngFor="let tpa of tipo_atencion_Arr">{{tpa.nombre}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  
+    <!-- Localidad -->
+    <ion-item>
+      <ion-input label="Localidad" labelPlacement="stacked" placeholder="Ingrese una localidad" [counter]="false" maxlength="30" [(ngModel)]="localidad"></ion-input>
+    </ion-item>
+
+    <!-- Comentarios -->
+    <ion-item>
+      <ion-textarea label="Comentarios" labelPlacement="stacked" placeholder="Ingrese un comentario" placeholder="Ingrese sus comentarios" [autoGrow]="true" [(ngModel)]="comentarios"></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <!-- LIMPIAR -->      
+      <ion-button size="default"  class="mid-button" color="warning" (click)="Limpiar()">
+        <ion-icon slot="start" name="clipboard-outline"></ion-icon>
+        Limpiar
+      </ion-button>
+      <!-- GUARDAR -->
+      <ion-button size="default"  class="mid-button" color="tertiary" (click)="SaveUpdate()">
+        <ion-icon slot="start" name="save-outline"></ion-icon>
+        {{saveUpdateValue}}
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-card>
+    <ion-card-header>
+      <!-- <ion-card-title>Movimientos del día</ion-card-title>    -->
+      <ion-item>
+        <ion-label style="font-weight: bold; font-size: 18px;">Actividades del día</ion-label>
+        <ion-badge color="primary">{{this.actividad.length}}</ion-badge>
+      </ion-item>
+      
+      <!-- <ion-item>
+        <ion-card-subtitle>{{now | date: 'fullDate'}}</ion-card-subtitle>
+      </ion-item> -->
+      <ion-card-subtitle>{{now | date: 'fullDate'}}</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-accordion-group>
+        <ion-accordion value="{{item.id}}" *ngFor="let item of this.actividad; index as i">
+            <ion-item slot="header">
+              <ion-label>{{i + 1}} - {{item.actividad}}</ion-label>
+            </ion-item>
+            <div class="ion-padding" slot="content">
+              <ion-row>
+                <ion-label style="font-weight: bold;">{{item.fecha_registro.substring(0,10)}} | {{item.hora_inicio}} - {{item.hora_fin}}</ion-label>
+              </ion-row>
+              <ion-row>
+                <ion-label>{{item.localidad}}</ion-label>
+              </ion-row>
+              {{item.comentarios}}
+             
+              <ion-row>
+                <ion-button fill="clear" size="small" (click)="Editar(item)">Editar</ion-button>
+                <ion-button fill="clear" size="small" color="danger" (click)="Eliminar(item)">Eliminar</ion-button>
+              </ion-row>              
+            </div>
+        </ion-accordion>
+      </ion-accordion-group>
+
+      <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

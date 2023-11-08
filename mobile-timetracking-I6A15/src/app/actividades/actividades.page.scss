@@ -1,0 +1,47 @@
+ion-input, ion-select, ion-textarea{
+    --highlight-height: 2px;
+    --highlight-color-focused: #6f58d8;
+    --highlight-color-valid: #67d858;
+    --highlight-color-invalid: #ff46be;
+  }
+
+  .full-button{
+    width: 100%;
+  }
+
+  .mid-button{
+    width: 50%;
+    font-weight: bold;
+    --ripple-color: #ff46be;
+  }
+
+
+//ACORDION
+ion-accordion {
+    margin: 0 auto;
+  }
+  
+  ion-accordion.accordion-expanding,
+  ion-accordion.accordion-expanded {
+    width: calc(100% - 32px);
+  
+    margin: 16px auto;
+  }
+  
+  ion-accordion.accordion-collapsing ion-item[slot='header'],
+  ion-accordion.accordion-collapsed ion-item[slot='header'] {
+    --background: var(--ion-color-light);
+    --color: var(--ion-color-light-contrast);
+  }
+  
+  ion-accordion.accordion-expanding ion-item[slot='header'],
+  ion-accordion.accordion-expanded ion-item[slot='header'] {
+    --background: var(--ion-color-primary);
+    --color: var(--ion-color-primary-contrast);
+  }
+
+//Infinite scroll
+ion-card > ion-card-content {
+    height: 20vh;
+    overflow: scroll;
+}

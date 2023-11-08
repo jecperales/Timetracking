@@ -1,0 +1,28 @@
+
+
+h1{
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.full-button{
+    width: 100%;
+  }
+
+.mid-button{
+    width: 50%;
+    font-weight: bold;
+    --ripple-color: #ff46be;
+}
+
+// ion-card {
+//     flex:1;
+
+// }
+
+ion-card > ion-card-content {
+    height: 55vh; //your height of content here
+    overflow: scroll;
+}

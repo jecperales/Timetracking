@@ -1,0 +1,19 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <br />
+            @{
+                
+                var ruta =Html.Raw(ViewBag.nombre);
+                <iframe style="margin:0;height:450px;width:100%;border:none;" src="@ruta"></iframe>
+            }
+            @*<iframe style="margin:0;height:450px;width:100%;border:none;" src="~/manuales/Manualweb.pdf"></iframe>*@
+
+        </div>
+        
+    </div>
+    
+</div>

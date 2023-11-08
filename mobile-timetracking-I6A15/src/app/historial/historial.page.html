@@ -1,0 +1,77 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-item>
+      <ion-avatar slot="start">
+        <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+      </ion-avatar>
+      <ion-label>{{ingeniero.nombre}} {{ingeniero.ap_paterno}}</ion-label>
+    </ion-item>
+
+    <ion-buttons slot="end">
+      <ion-button [routerLink]="'/login'"> Logout </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <h1>Historial de actividades</h1>
+
+  <ion-item>
+    <ion-datetime-button datetime="fecha_inicio" style="width: 50%;"></ion-datetime-button>
+    <ion-modal [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime id="fecha_inicio" presentation="date" [(ngModel)]="f1"></ion-datetime>      
+      </ng-template>
+    </ion-modal>
+
+    <ion-datetime-button datetime="fecha_fin" style="width: 50%;"></ion-datetime-button>
+    <ion-modal [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime id="fecha_fin" presentation="date"  [(ngModel)]="f2"></ion-datetime>      
+      </ng-template>
+    </ion-modal>
+  </ion-item>
+
+  <ion-item>
+    <ion-button size="default"  class="full-button" color="tertiary" (click)="getHistorial()">Buscar</ion-button>
+  </ion-item>
+  
+  
+
+  <ion-card>
+    <ion-card-header>
+      <ion-item>
+        <ion-label style="font-weight: bold; font-size: 18px;">Actividades del día</ion-label>
+        <ion-badge color="primary">{{this.items.length}}</ion-badge>
+      </ion-item>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-accordion-group>
+        <ion-accordion value="{{item.id}}" *ngFor="let item of this.items; index as i">
+            <ion-item slot="header">
+              <ion-label>{{i + 1}} - {{item.actividad}}</ion-label>
+            </ion-item>
+            <div class="ion-padding" slot="content">
+              <ion-row>
+                <ion-label style="font-weight: bold;">{{item.fecha_registro.substring(0,10)}} | {{item.hora_inicio}} - {{item.hora_fin}}</ion-label>
+              </ion-row>
+              <ion-row>
+                <ion-label>{{item.localidad}}</ion-label>
+              </ion-row>
+                {{item.comentarios}}             
+              <ion-row>
+                <!-- <ion-button fill="clear" size="small" (click)="Editar(item)">Editar</ion-button> -->
+                <ion-button fill="clear" size="small" color="danger" (click)="Eliminar(item)">Eliminar</ion-button>
+              </ion-row>              
+            </div>
+        </ion-accordion>
+      </ion-accordion-group>
+
+      <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+        <ion-infinite-scroll-content></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

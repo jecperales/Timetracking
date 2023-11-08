@@ -1,0 +1,265 @@
+﻿@{
+    ViewBag.Title = "historialmovimientos";
+}
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/angular.min.js"></script>
+<script src="~/Scripts/sweetaler.js"></script>
+<script src="~/Scripts/ui-bootstrap-tpls-3.0.3.min.js"></script>
+<script src="~/Scripts/jquery.maskedinput.js"></script>
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/jquery-ui1_12_1.js"></script>
+
+<style>
+
+    body .ui-autocomplete {
+        background: #ffffff;
+        width: 200px;
+    }
+</style>
+<div class="container-fluid" ng-app="myApp" ng-controller="myCtrl">
+    <div class="row">
+        @{
+            int per = int.Parse(Session["id_perfil"].ToString());
+            if (per == 1 || per == 2)
+            {
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="inputText3" class="col-form-label">Buscar Personal</label>
+                        <input type="text" name="PersonName" id="PersonName" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="inputText3" class="col-form-label">Proyecto</label>
+                        <select id="proyect" ng-model="proyecto" class="form-control">
+                            <option ng-repeat="x in Tproyecto" value="{{x.id}}">{{x.label}}</option>
+                        </select>
+                    </div>
+                </div>
+            }
+         }
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="inputText3" class="col-form-label">Fecha inicial</label>
+                        <input id="fecha_inicial" type="date" ng-model="fecha_inicial" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="inputText3" class="col-form-label">Fecha final</label>
+                        <input id="fecha_final" type="date" ng-model="fecha_final" class="form-control">
+                    </div>
+                </div>
+
+            </div>
+    <div class="row">
+        <div class="col-md-2">
+            <br />
+            <button class="btn btn-warning" ng-click="limpear()">
+                <i class="fa fa-trash"> Limpear</i>
+            </button>
+        </div>
+        <div class="col-md-2">
+            <br />
+            <button class="btn btn-primary" ng-click="buscar()">
+                <i class="fa fa-search-plus"> Buscar</i>
+            </button>
+        </div>
+        <div class="col-md-2">
+            <br />
+            <button class="btn btn-success" ng-click="descargar()">
+                <i class="fa fa-file-excel"> Exportar</i>
+            </button>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Actividad</th>
+                        @*<th>No Ticket</th>*@
+                        <th>Fecha</th>
+                        <th>Hora inicio</th>
+                        <th>Hora fin</th>
+                        <th>Localidad</th>
+                        <th>Torre</th>
+                        @{
+                            int perf1 = int.Parse(Session["id_perfil"].ToString());
+                            if (perf1 == 1 || perf1 == 2)
+                            {
+                                <th hidden>
+                                    Acciones
+                                </th>
+                            }
+                        }
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="d in Tdatos">
+                        <td>{{d.nombre_usuario}}</td>
+                        <td>{{d.actividad}}</td>
+                        @*<td>{{d.no_ticket}}</td>*@
+                        <td>{{d.fecha_registro.substr(6,13) | date:'dd/MM/yyyy'}}</td>
+                        <td>{{d.hora_inicio}}</td>
+                        <td>{{d.hora_fin}}</td>
+                        <td>{{d.localidad}}</td>
+                        <td>{{d.torre}}</td>
+                        @{
+                            int perf = int.Parse(Session["id_perfil"].ToString());
+                            if (perf == 1 || perf == 2)
+                            {
+                                <td hidden>
+                                    <i ng-click="cambiar_estatus(d.id,4)" class="fa fa-spinner" title="Pendiente" style="float:left;width:35px;color:darkblue;"></i>
+                                    <i ng-click="cambiar_estatus(d.id,3)" class="fa fa-times-circle" title="Cancelar" style="float:left;width:35px;color:darkorange;"></i>
+                                    <i ng-click="cambiar_estatus(d.id,2)" class="fa fa-lock" title="Cerrar" style="float:left;width:35px;color:darkred;"></i>
+                                </td>
+                            }
+                        }
+
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    var app = angular.module('myApp', ['ui.bootstrap']);
+    app.controller('myCtrl', function ($scope, $http) {
+        $scope.fecha_inicial = '';
+        $scope.fecha_final = '';
+        $scope.Tdatos = [];
+        $scope.Tproyecto = JSON.parse('@Html.Raw(ViewBag.proyecto)');
+        $scope.proyecto = '';
+        
+        
+        
+        $scope.limpear = function () {
+            $scope.fecha_inicial = '';
+            $scope.fecha_final = '';
+            $scope.Tdatos = [];
+            document.getElementById('PersonName').value = '';
+        }
+
+        $scope.cambiar_estatus = function (id,estatus) {
+            $scope.bus = {
+                id_mov: id,
+                estatus: estatus
+            }
+            $http.post("@Url.Action("cambiar_estatus", "Movimiento")", JSON.stringify($scope.bus))
+                .then(function (response) {
+                    if (response.data) {
+
+                    }
+                }, function (response) {
+
+                });
+        }
+
+        $scope.descargar = function () {
+           var fecha1= document.getElementById('fecha_inicial').value;
+            var fecha2 = document.getElementById('fecha_final').value;
+            var use = 0;
+            var val_tem = $("#PersonName").val();
+            
+            var val = $scope.proyecto;
+            //var proy = $("#proyect").val() != null ? $("#proyect").val() : 0;
+            var proy = val.length > 0 ? $("#proyect").val() : 0;
+
+            if ($("#PersonName").val()==null) {
+                use = 0;
+            } else {
+                use = selecteditem.Person != null ? selecteditem.Person : 0;
+            }
+            
+            window.location = '@Url.Action("descargarMovimientos", "Movimiento")?fecha1=' + fecha1 + "&fecha2=" + fecha2 + "&trabajador=" + use + "&proyect=" + proy;
+        }
+
+        $scope.buscar = function () {
+            var use = 0;
+            
+            if ($("#fecha_inicial").val().length >= 1 && $("#fecha_final").val().length >= 1) {
+                
+                if ($("#PersonName").val() != null) {
+                    if ($("#PersonName").val().length == 0) {
+                        use = 0;
+                    } else {
+                        use = selecteditem.Person != null ? selecteditem.Person : 0;
+                    }
+                } else {
+                    use = 0;
+                }
+                
+                var val = $scope.proyecto;
+                //var proy = $("#proyect").val() != null ? $("#proyect").val() : 0;
+                var proy = val.length >0 ? $("#proyect").val() : 0;
+                
+            $scope.bus = {
+                fecha1: document.getElementById('fecha_inicial').value,
+                fecha2: document.getElementById('fecha_final').value,
+                trabajador: use,
+                proyect:proy
+                }
+                
+
+            $http.post("@Url.Action("buscarMovimientos", "Movimiento")", JSON.stringify($scope.bus))
+                .then(function (response) {
+                    $scope.Tdatos = response.data;
+                }, function (response) {
+
+                });
+
+
+            }
+            else {
+                $scope.msn("Ingrese Fecha","warning");
+            }
+           
+        }
+
+        $scope.msn = function (text,codigo) {
+            Swal.fire({
+                position: 'top-end',
+                icon: codigo,
+                title: text,
+                showConfirmButton: false,
+                timer: 1500
+            })
+        }
+
+    });
+</script>
+
+
+<script>
+    var selecteditem = '';
+
+    $("#PersonName").autocomplete({
+    source: function (request, response) {
+    $.ajax({
+    url: '@Url.Action("SearchPerson", "Movimiento")', type: "GET",
+    dataType: "json",
+    data: { term: request.term },
+    success: function (data) {
+    response($.map(data, function (item) {
+    return { Name: item.Name, Person: item.PersonID, value: item.Name };
+    }))
+    }
+    })
+
+    },
+    minLength: 3,
+    select: function (event, ui) {
+        selecteditem = ui.item;
+        
+    }
+    });
+
+
+
+</script>

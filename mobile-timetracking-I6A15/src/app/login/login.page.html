@@ -1,0 +1,32 @@
+
+<ion-content>
+  <div class="login-section ion-padding">
+    <div class="heading ion-padding">
+      <h1>Bienvenido Timetracking!</h1>
+      <p>Sing in to continue</p>
+    </div>
+    <div class="login-form ion-padding">
+      <div class="form-input">
+        <ion-icon name="mail-outline"></ion-icon>
+        <ion-item>
+          <ion-label position="floating">Usuario</ion-label>
+          <ion-input type="text" name="uid" aria-label="Usuario" [(ngModel)]="uid" required></ion-input>
+        </ion-item>
+      </div>
+      <div class="form-input">
+        <ion-icon name="lock-closed-outline"></ion-icon>
+        <ion-item>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input type="password" name="password" aria-label="Password" [(ngModel)]="password" required></ion-input>
+        </ion-item>
+      </div>
+    </div>
+    <div class="action-buttons ion-padding">
+      <ion-button size="large" class="login-button"  (click)="login(this.uid, this.password)">Log in</ion-button>
+      <P>Olvidé mi contraseña.</P>
+      <ion-button size="large" class="singup-button" fill="outline">Registarse.</ion-button>
+    </div>
+  </div>
+</ion-content>
+
+

@@ -1,0 +1,491 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/angular.min.js"></script>
+<script src="~/Scripts/sweetaler.js"></script>
+<script src="~/Scripts/ui-bootstrap-tpls-3.0.3.min.js"></script>
+<script src="~/Scripts/jquery.maskedinput.js"></script>
+<script src="~/Scripts/jquery-ui1_12_1.js"></script>
+
+<style>
+ 
+    body .ui-autocomplete {
+        background: #ffffff;
+        width:200px;
+    }
+</style>
+<div class="container-fluid" ng-app="myApp" ng-controller="myCtrl">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="inputText3" class="col-form-label">Actividad (Max 30 caracteres)</label>
+                @*<input id="actividad" type="text" class="form-control" ng-model="actividad" maxlength="30">*@                
+                <select id="actividad" 
+                        class="form-control" 
+                        ng-model="actividad" 
+                        ng-options="i.actividad for i in ACTIVIDADES_LIST_KV" 
+                        ng-change="isWithNoActivity()">               
+                </select>
+                
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="inputText3" class="col-form-label">Fecha</label>
+                <input id="inputText3" type="date" class="form-control"  ng-model="fecha">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="inputText3" class="col-form-label">Hora inicio</label>
+                <input id="fecha_inicio"  type="time" class="form-control" ng-model="fecha_hora">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="inputText3" class="col-form-label">Hora fin</label>
+                <input id="fecha_fin" type="time" class="form-control" ng-model="fecha_fin">
+                
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="inputText3" class="col-form-label">Comentarios</label>
+                <input id="comentarios" type="text" class="form-control" ng-model="comentarios">
+            </div>
+        </div>
+        <div class="col-md-2" hidden>
+            <div class="form-group">
+                @*<label for="inputText3" class="col-form-label">No ticket</label>
+                    <input id="no_tiket" type="text" class="form-control" ng-model="no_tiket">*@
+                <label class="custom-control  custom-control-inline" ng-click="contiquet()">
+                    <input type="checkbox" checked="" class="custom-control-input" ng-model="activa">
+                    <span class="custom-control-label">No ticket</span>
+                </label>
+                <input id="no_tiket" type="text" class="form-control" ng-disabled="activa" ng-model="no_tiket">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="inputText3" class="col-form-label">Torre atención</label>
+                <select class="form-control" id="TorreAtencion" ng-model="SlectAtencion" ng-options="x.label for x in Tatencion"></select>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="inputText3" class="col-form-label">Tipo atencion</label>
+                <select class="form-control" id="TipoAtencion" ng-model="SlectEstatus" ng-options="x.label for x in Testatus"></select>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="inputText3" class="col-form-label">Localidad</label>
+                <input type="text" class="form-control" id="Localidad" ng-model="localidad" name="name" value="" />
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-2">
+            <button class="btn btn-info" ng-click="limpear()">
+                <i class="fa fa-trash"> Limpiar</i>
+            </button>
+        </div>
+        <div class="col-md-2" ng-if="boolModifica==false">
+            <button class="btn btn-primary" ng-click="guardar()">
+                <i class="fa fa-save"> Guardar</i>
+            </button>
+        </div>
+        <div class="col-md-2" ng-if="boolModifica==true">
+            <button class="btn btn-success" ng-click="modificar()">
+                <i class="fa fa-save"> Modificar</i>
+            </button>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Actividad</th>
+                        <th>Fecha</th>
+                        <th>Hora inicio</th>
+                        <th>Hora fin</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="d in Tdatos">
+                        <td>{{d.actividad}}</td>
+                        <td>{{d.fecha_registro.substr(6,13) | date:'dd/MM/yyyy'}}</td>
+                        <td>{{d.hora_inicio | date:'H:m'}}</td>
+                        <td>{{d.hora_fin | date:'H:m'}}</td>
+                        <td>
+                            <div style="float:left;width:35px;"><i ng-click="editar(d)" class="fa fa-edit" style="color:darkblue;" title="Editar"></i></div>
+                            <div style="float:left;width:35px;"><i ng-click="eliminar(d)" class="fa fa-trash" style="color:darkred;" title="Eliminar"></i></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="text-align: center">
+                <ul uib-pagination total-items="totalCount" ng-model="pageIndex" ng-change="pageChanged()" items-per-page="pageSizeSelected" direction-links="true" max-size="maxSize" class="pagination" boundary-links="true" rotate="false" num-pages="numPages"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var app = angular.module('myApp', ['ui.bootstrap']);
+    app.controller('myCtrl', function ($scope, $http) {
+        $scope.actividad = '';
+        $scope.fecha_hora = '';
+        $scope.fecha_fin = '';
+        $scope.fecha = '';//'@DateTime.Now';
+        $scope.Tdatos = [];
+        $scope.comentarios = '';
+        $scope.no_tiket = '';
+        $scope.localidad = '';
+        $scope.SlectEstatus = '';
+        $scope.Testatus = JSON.parse('@Html.Raw(ViewBag.tipo_atencion)');
+        $scope.activa = true;
+        $scope.SlectAtencion = '';
+        $scope.Tatencion = JSON.parse('@Html.Raw(ViewBag.torre)');
+        $scope.localidad = '';
+
+        $scope.totalCount = 0;
+        $scope.pageIndex = 1;
+        $scope.pageSizeSelected = 6;
+        $scope.boolModifica = false;
+        $scope.temid = 0;
+
+        @*var control = document.getElementById("inputText3");
+        control.value = '@DateTime.Now.ToString("yyyy-MM-dd")';*@
+
+        $scope.ACTIVIDADES_LIST_KV = [
+            { "index": 1, "actividad": "PROVEEDOR" },
+            { "index": 2, "actividad": "REDES" },
+            { "index": 3, "actividad": "ENVIO Y RECEPCION" },
+            { "index": 4, "actividad": "REUNION" },
+            { "index": 5, "actividad": "CONFIGURACION DE EQUIPO" },
+            { "index": 6, "actividad": "CONFIGURACION DE IMPRESORAS" },
+            { "index": 7, "actividad": "CONFIGURACION DE EDA" },
+            { "index": 8, "actividad": "CONFIGURACION DE PANTALLAS" },
+            { "index": 9, "actividad": "CONFIGURACION DE BASCULAS" },
+            { "index": 10,"actividad": "CONFIGURACION DE MOVILES" },
+            { "index": 11,"actividad": "GARANTIAS" },
+            { "index": 12,"actividad": "SIN ACTIVIDADES ADICIONALES" }
+        ];
+
+        $scope.modificar = function () {
+
+             $scope.mov = {
+                id: $scope.temid,
+                id_usuario :1,
+                actividad: $scope.actividad.actividad,
+                fecha_registro: $scope.fecha,
+                hora_inicio: document.getElementById("fecha_inicio").value,
+                hora_fin: document.getElementById("fecha_fin").value,
+                id_cat_estatus: 1,
+                comentarios: $scope.comentarios,
+                no_ticket: $scope.no_tiket,
+                id_cat_torres: $scope.SlectAtencion.id,
+                id_tipo_atencion: $scope.SlectEstatus.id,
+                localidad:$scope.localidad
+            }
+
+            $http.post("@Url.Action("registraMovimiento", "Movimiento")", JSON.stringify($scope.mov))
+                .then(function (response) {
+                    if (response.data) {
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Movimiento registrado',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        $scope.getEmployeeList();
+                        $scope.limpear();
+                    }
+                }, function (response) {
+
+                });
+        }
+
+        $scope.editar = function (d) {
+
+            $scope.boolModifica = true;
+            $scope.temid = d.id;
+            //$scope.actividad = d.actividad;
+            $scope.actividad = $scope.ACTIVIDADES_LIST_KV.find(x => x.actividad == d.actividad);
+
+            var ms = parseInt(d.fecha_registro.match(/\((\d+)\)/)[1]);
+            var k = new Date(ms).toISOString().substring(0, 10);
+
+            var z = k.split('-')
+            var fe = z[2] + '-' + z[1] + '-' + z[0];
+            var control = document.getElementById("inputText3");
+
+            $scope.fecha = fe;
+            control.value = k;
+
+            document.getElementById("fecha_inicio").value = d.hora_inicio;
+            document.getElementById("fecha_fin").value = d.hora_fin;
+            $scope.comentarios = d.comentarios;
+            $scope.SlectAtencion = $scope.Tatencion.find(x => x.id = d.id_cat_torres);
+            $scope.SlectEstatus = $scope.Testatus.find(x => x.id == d.id_tipo_atencion);
+            $scope.localidad = d.localidad;
+        }
+
+        $scope.eliminar = function (d) {
+
+            Swal.fire({
+                title: 'Eliminar registro?',
+                text: "",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Confirmar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                     $scope.mov = {
+                id: d.id
+            }
+            $http.post("@Url.Action("eliminar_registro", "Movimiento")", JSON.stringify($scope.mov))
+                .then(function (response) {
+                    debugger;
+                    if (response.data) {
+                        Swal.fire("Correcto!", "Registro eliminado", "success");
+                        $scope.limpear();
+                        $scope.getEmployeeList();
+                    }
+                }, function (response) {
+
+                });
+                }
+            })
+
+
+        }
+
+        $scope.contiquet = function () {
+            if ($scope.activa) {
+                $scope.no_tiket = 'N/A';
+            } else {
+                $scope.no_tiket = '';
+            }
+        }
+
+        $scope.getEmployeeList = function () {
+
+                   //' + $scope.pageIndex + "&pageSize=" + $scope.pageSizeSelected).then(
+                    $http.post('@Url.Action("paginaMovimientos", "Movimiento")?pageIndex=' + $scope.pageIndex + "&pageSize=" + 50).then(
+                    function (response) {
+                        $scope.Tdatos = [];
+                        $scope.Tdatos = response.data.lista;
+                        $scope.totalCount = response.data.total;
+                    },
+                    function (err) {
+                        var error = err;
+                    });
+        };
+
+        $scope.getEmployeeList();
+
+        $scope.pageChanged = function () {
+            $scope.getEmployeeList();
+        };
+
+        $scope.changePageSize = function () {
+            $scope.pageIndex = 1;
+            $scope.getEmployeeList();
+        };
+
+        $scope.guardar = function () {
+
+            var hi = document.getElementById("fecha_inicio").value;
+            var hf = document.getElementById("fecha_fin").value;
+
+            if (typeof $scope.actividad.actividad === 'undefined' || $scope.actividad.actividad.index == 0) {
+                $scope.msn("Seleccione una actividad", "error");
+                return;
+            }
+            if ( typeof $scope.fecha_hora === 'undefined' || hi === '') {
+                $scope.msn("Favor de verificar que la hora de inicio no esté vacia e indique si es am o pm", "error");
+                return;
+            }
+            if ( $scope.fecha === 'undefined' || $scope.fecha === '') {
+                $scope.msn("Favor de especificar una fecha", "error");
+                return;
+            }
+            if (typeof $scope.fecha_fin === 'undefined' || hf === '') {
+                $scope.msn("Favor de verificar que la hora de fin no esté vacia e indique si es am o pm", "error");
+                return;
+            }
+
+            if (typeof $scope.fecha_hora != 'undefined' && typeof $scope.fecha_fin !='undefined') {
+                if ($scope.fecha_hora > $scope.fecha_fin) {
+                    $scope.msn("La hora de inicio no debe ser mayor a la hora final.", "error");
+                    return;
+                }
+            }
+
+            if (typeof $scope.SlectAtencion.id == 'undefined' || typeof $scope.SlectAtencion.id == 0)
+            {
+                $scope.msn("La torre de atencion no pude ir vacia.", "error");
+                return;
+            }
+
+            if (typeof $scope.comentarios === 'undefined' || $scope.comentarios.trim() == (null || ""))
+            {
+                $scope.msn("El comentario no pude ir vacio.", "error");
+                return;
+            }
+
+            if (typeof $scope.SlectEstatus.id =='undefined' ||  typeof $scope.SlectEstatus.id == 0)
+            {
+                $scope.msn("El tipo de atencion no pude ir vacio.", "error");
+                return;
+            }
+
+            if (typeof $scope.localidad == 'undefined' || $scope.localidad.trim() == (null || ""))
+            {
+                $scope.msn("La localidad no puede ir vacia", "error");
+                return;
+            }
+
+            $scope.mov = {
+                id:0,
+                id_usuario :1,
+                actividad: $scope.actividad.actividad,
+                fecha_registro: $scope.fecha,
+                hora_inicio: document.getElementById("fecha_inicio").value,
+                hora_fin: document.getElementById("fecha_fin").value,
+                id_cat_estatus: 1,
+                comentarios: $scope.comentarios,
+                no_ticket: $scope.no_tiket,
+                id_cat_torres: $scope.SlectAtencion.id,
+                id_tipo_atencion: $scope.SlectEstatus.id,
+                localidad: $scope.localidad,
+                fecha_registro_real: ''
+            }
+
+            $http.post("@Url.Action("registraMovimiento", "Movimiento")", JSON.stringify($scope.mov)).then(
+                function (response) {
+                    if (response.data) {
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Movimiento registrado',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        $scope.getEmployeeList();
+                        $scope.limpear();
+                    }
+                },
+                function (err) {
+                    var error = err;
+                }
+            );
+        }
+
+        $scope.limpear = function () {
+            $scope.actividad = document.getElementById("actividad").selectIndex = "0";
+            $scope.fecha_hora = '';
+            $scope.fecha_fin = '';
+            $scope.fecha = '';//'@DateTime.Now';
+            $scope.comentarios = '';
+            $scope.no_tiket = '';
+            $scope.localidad = '';
+            $scope.boolModifica = false;
+            $scope.temid = 0;
+            document.getElementById("fecha_inicio").value = '';
+            document.getElementById("fecha_fin").value = '';
+            document.getElementById('actividad').focus();
+
+            $scope.unBlockControls();
+        }
+
+        $scope.msn = function (text, codigo) {
+
+            if (codigo === "error") {
+                Swal.fire({
+                    position: 'center',
+                    icon: codigo,
+                    title: text,
+                    showConfirmButton: true,
+                })
+            }
+            else
+            {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: codigo,
+                    title: text,
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+        }
+
+        $scope.isWithNoActivity = function () {
+            if ($scope.actividad.index == 12) {
+                document.getElementById("fecha_inicio").value = "00:00";
+                document.getElementById("fecha_fin").value = "00:05";
+                $scope.comentarios = "El dia de hoy se atendieron puros tickets";
+                $scope.SlectAtencion = $scope.Tatencion.find(item => item.id == 2);
+                $scope.SlectEstatus = $scope.Testatus.find(item => item.id == 1);
+                $scope.localidad = "En sitio";
+
+                $scope.blockControls();
+            }
+            else {
+                $scope.unBlockControls();
+            }
+        }
+
+        $scope.blockControls = function () {
+            $("#fecha_inicio").attr("disabled", true);
+            $("#fecha_fin").attr("disabled", true);
+            $("#comentarios").attr("disabled", true);
+            $("#TorreAtencion").attr("disabled", true);
+            $("#TipoAtencion").attr("disabled", true);
+            $("#Localidad").attr("disabled", true);
+
+        }
+
+        $scope.unBlockControls = function () {
+            $("#fecha_inicio").attr("disabled", false);
+            $("#fecha_fin").attr("disabled", false);
+            $("#comentarios").attr("disabled", false);
+            $("#TorreAtencion").attr("disabled", false);
+            $("#TipoAtencion").attr("disabled", false);
+            $("#Localidad").attr("disabled", false);
+
+            $scope.fecha = '';//'@DateTime.Now';
+            $scope.fecha_hora = '';
+            $scope.fecha_fin = '';
+            $scope.comentarios = "";
+            $scope.SlectAtencion = "";
+            $scope.SlectEstatus = "";
+            $scope.localidad = "";
+            $scope.no_tiket = '';
+            $scope.localidad = '';
+            $scope.temid = 0;
+
+
+            document.getElementById("fecha_inicio").value = '';
+            document.getElementById("fecha_fin").value = '';
+            //$("#inputText3").attr("readonly", true);
+            document.getElementById('actividad').focus();
+
+        }
+
+    });
+</script>
