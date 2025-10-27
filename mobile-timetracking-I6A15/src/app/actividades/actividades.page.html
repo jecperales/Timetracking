@@ -19,6 +19,9 @@
     <!-- Acyividad -->
     <ion-item>
       <ion-input label="Actividad (Max 30 caracteres)" placeholder="Ingrese una actividad" labelPlacement="stacked" [counter]="false" maxlength="30" [(ngModel)]="activity"></ion-input>
+      <ion-select label = "Actividad" labelPlacement="stacked" placeholder="Seleccione..." [(ngModel)]="actDpDwValue" (ngModelChange)="isWithNoActivity()">
+        <ion-select-option [value]="a" *ngFor="let a of actividadesDropDown">{{a.descripcion}}</ion-select-option>
+      </ion-select>
     </ion-item>
 
     <!-- Fecha, hora de inicio, hora de fin -->
@@ -33,39 +36,39 @@
       <ion-datetime-button datetime="h_inicio"></ion-datetime-button>
       <ion-modal [keepContentsMounted]="true">
         <ng-template>
-          <ion-datetime id="h_inicio" presentation="time" [(ngModel)]="hora_inicio"></ion-datetime>      
+          <ion-datetime id="h_inicio" presentation="time" [(ngModel)]="hora_inicio" [disabled] = "isBlocked"></ion-datetime>      
         </ng-template>
       </ion-modal>
 
       <ion-datetime-button datetime="h_fin"></ion-datetime-button>
       <ion-modal [keepContentsMounted]="true">
         <ng-template>
-          <ion-datetime id="h_fin" presentation="time" [(ngModel)]="hora_fin"></ion-datetime>      
+          <ion-datetime id="h_fin" presentation="time" [(ngModel)]="hora_fin" [disabled] = "isBlocked"></ion-datetime>      
         </ng-template>
       </ion-modal>
     </ion-item>
 
     <!-- Torre de atencion -->
     <ion-item>
-      <ion-select label="Torre de atención" labelPlacement="stacked" placeholder="Seleccione..." [(ngModel)]="torre_atencion">
+      <ion-select label="Torre de atención" labelPlacement="stacked" placeholder="Seleccione..." [(ngModel)]="torre_atencion" [disabled] = "isBlocked">
         <ion-select-option [value]="ta" *ngFor="let ta of torre_atencion_Arr">{{ta.nombre}}</ion-select-option>
       </ion-select>
 
       <span class="ion-padding"></span>
 
-      <ion-select label="Tipo de atención" labelPlacement="stacked" placeholder="Seleccione..." [(ngModel)]="tipo_atencion">
+      <ion-select label="Tipo de atención" labelPlacement="stacked" placeholder="Seleccione..." [(ngModel)]="tipo_atencion" [disabled] = "isBlocked">
         <ion-select-option [value]="tpa" *ngFor="let tpa of tipo_atencion_Arr">{{tpa.nombre}}</ion-select-option>
       </ion-select>
     </ion-item>
   
     <!-- Localidad -->
     <ion-item>
-      <ion-input label="Localidad" labelPlacement="stacked" placeholder="Ingrese una localidad" [counter]="false" maxlength="30" [(ngModel)]="localidad"></ion-input>
+      <ion-input label="Localidad" labelPlacement="stacked" placeholder="Ingrese una localidad" [counter]="false" maxlength="30" [(ngModel)]="localidad" [disabled] = "isBlocked"></ion-input>
     </ion-item>
 
     <!-- Comentarios -->
     <ion-item>
-      <ion-textarea label="Comentarios" labelPlacement="stacked" placeholder="Ingrese un comentario" placeholder="Ingrese sus comentarios" [autoGrow]="true" [(ngModel)]="comentarios"></ion-textarea>
+      <ion-textarea label="Comentarios" labelPlacement="stacked" placeholder="Ingrese un comentario" placeholder="Ingrese sus comentarios" [autoGrow]="true" [(ngModel)]="comentarios" [disabled] = "isBlocked"></ion-textarea>
     </ion-item>
 
     <ion-item>

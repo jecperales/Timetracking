@@ -13,6 +13,7 @@
   },
   "private": true,
   "dependencies": {
+    "-": "^0.0.1",
     "@angular/animations": "^16.0.0",
     "@angular/common": "^16.0.0",
     "@angular/compiler": "^16.0.0",
@@ -24,7 +25,10 @@
     "@capacitor/android": "^5.2.2",
     "@capacitor/core": "^5.2.2",
     "@ionic/angular": "^7.0.0",
+    "g": "^2.0.1",
     "ionicons": "^7.0.0",
+    "mpn": "^0.1.0",
+    "npm": "^10.2.5",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"

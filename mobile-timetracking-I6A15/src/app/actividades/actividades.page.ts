@@ -15,6 +15,7 @@ import { TorreAtencionService } from '../services/torre-atencion.service';
 })
 export class ActividadesPage implements OnInit {
   
+  isBlocked: boolean = false;
   items: any = [];
 
   user: any = {
@@ -34,18 +35,7 @@ export class ActividadesPage implements OnInit {
   localidad: any;
   comentarios: any;
 
-  // torre_atencion_Arr: any = {
-  //   id: Number,
-  //   nombre: String,
-  //   estatus: Number
-  // }
   torre_atencion_Arr: any = [];
-
-  // tipo_atencion_ArrDef: any = {
-  //   id: Number,
-  //   nombre: String,
-  //   estatus: Number
-  // }
   tipo_atencion_Arr: any = [];
 
 
@@ -66,21 +56,23 @@ export class ActividadesPage implements OnInit {
   }
 
   //MOVIMINETO MODEL
-  // actividad: any = {
-  //   id: Number,
-  //   id_usuario: Number,
-  //   actividad: String,
-  //   fecha_registro: Date,
-  //   hora_inicio: String,
-  //   hora_fin: String,
-  //   id_cat_estatus: Number,
-  //   comentarios: String,
-  //   no_ticket: Number,
-  //   id_tipo_atencion: Number,
-  //   localidad: String,
-  //   fecha_registro_real: String
-  // }
   actividad: any = [];
+  actividadesDropDown: any = [
+    { "id": 1, "descripcion": "PROVEEDOR" },
+    { "id": 2, "descripcion": "REDES" },
+    { "id": 3, "descripcion": "ENVIO Y RECEPCION" },
+    { "id": 4, "descripcion": "REUNION" },
+    { "id": 5, "descripcion": "CONFIGURACION DE EQUIPO" },
+    { "id": 6, "descripcion": "CONFIGURACION DE IMPRESORAS" },
+    { "id": 7, "descripcion": "CONFIGURACION DE EDA" },
+    { "id": 8, "descripcion": "CONFIGURACION DE PANTALLAS" },
+    { "id": 9, "descripcion": "CONFIGURACION DE BASCULAS" },
+    { "id": 10,"descripcion": "CONFIGURACION DE MOVILES" },
+    { "id": 11,"descripcion": "GARANTIAS" },
+    { "id": 12,"descripcion": "SIN ACTIVIDADES ADICIONALES" }
+  ];
+  actDpDwValue : any;
+  
 
   actividadInsert: any = {
     id: Number,
@@ -96,8 +88,6 @@ export class ActividadesPage implements OnInit {
     localidad: String,
     fecha_registro_real: String
   }
-
- 
 
   //GUARDAR/ACTUALIZAR Action
   saveUpdateValue = "Guardar";
@@ -143,6 +133,7 @@ export class ActividadesPage implements OnInit {
     console.log(this.fecha_r);
     console.log(this.hora_inicio);
     console.log(this.hora_fin);
+    console.log();
   }
 
   async presentAlert(header:string, subHeader: string, message: string, ) {
@@ -156,7 +147,6 @@ export class ActividadesPage implements OnInit {
 
     await alert.present();
   }
-
 
   private generateItems() {
     // const count = this.items.length + 1;
@@ -331,7 +321,6 @@ export class ActividadesPage implements OnInit {
     }
   }
 
-
   ValidaDatos()
   {
     
@@ -445,6 +434,8 @@ export class ActividadesPage implements OnInit {
     this.localidad = "";
     this.comentarios = "";
 
+    
+
     this.saveUpdateValue = "Guardar";
 
 
@@ -515,5 +506,34 @@ export class ActividadesPage implements OnInit {
         this.getActividadTodayByUId(this.ingeniero.id);
       }
     });
+  }
+
+  isWithNoActivity(){
+    //console.log(this.actDpDwValue);
+    if(this.actDpDwValue.id == 12)
+    {
+      this.hora_inicio = "00:00";
+      this.hora_fin = "00:05";
+      this.torre_atencion = this.torre_atencion_Arr[this.torre_atencion_Arr.findIndex((item: { id: any; }) => item.id == 2)]; //Usuario Bimbo 
+      this.tipo_atencion = this.tipo_atencion_Arr[this.tipo_atencion_Arr.findIndex((item: {id: any; }) => item.id == 1)]; //Presencial
+      this.localidad = "En sitio";
+      this.comentarios = "El dia de hoy se atendieron puros tickets";
+
+      this.blockControls();
+    }
+    else
+    {
+      this.unblockControls();
+      this.Limpiar();
+    }
+  }
+
+  blockControls()
+  {
+    this.isBlocked = true;
+  }
+
+  unblockControls(){
+    this.isBlocked =  false;
   }
 }
